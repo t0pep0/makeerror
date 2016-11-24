@@ -13,13 +13,13 @@ package errors
 type Error uint64
 
 const (
-        E_WRONG_PASSWORD = Error(iota)
+        E_WRONG_PASSWORD Error = iota
 )
 ```
 
 
 ```bash
-$go generate
+$ go generate
 ```
 
 
@@ -33,10 +33,9 @@ const (
         makeerrorUnknown = "Unknown error type"
 )
 
-func (self Error) Error() string{
-        switch self {
+func (e Error) Error() string {
+        switch e {
                 case E_WRONG_PASSWORD: return strE_WRONG_PASSWORD
-                default: return  makeerrorUnknown
         }
         return makeerrorUnknown
 }
