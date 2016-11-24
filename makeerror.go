@@ -76,7 +76,6 @@ func main() {
 	for _, c := range constList {
 		fmt.Fprintf(gen, "\t\tcase %v: return str%[1]v\n", c)
 	}
-	fmt.Fprintf(gen, "\t\tdefault: return  makeerrorUnknown\n")
 	fmt.Fprintf(gen, "\t}\n")
 	fmt.Fprintf(gen, "\treturn makeerrorUnknown\n")
 	fmt.Fprintf(gen, "}\n")
