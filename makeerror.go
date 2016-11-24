@@ -70,8 +70,9 @@ func main() {
 	}
 	fmt.Fprintf(gen, "\tmakeerrorUnknown = \"Unknown error type\"\n")
 	fmt.Fprintf(gen, ")\n\n")
-	fmt.Fprintf(gen, "func (%v %v) Error() string{\n", string(strings.ToLower(*types)[0]), *types)
-	fmt.Fprintf(gen, "\tswitch self {\n")
+	abbrType := string(strings.ToLower(*types)[0])
+	fmt.Fprintf(gen, "func (%v %v) Error() string{\n", abbrType, *types)
+	fmt.Fprintf(gen, "\tswitch %v {\n", abbrType)
 	for _, c := range constList {
 		fmt.Fprintf(gen, "\t\tcase %v: return str%[1]v\n", c)
 	}
