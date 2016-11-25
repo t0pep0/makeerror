@@ -32,6 +32,7 @@ func main() {
 	//typeList := strings.Split(*types, ",")
 	fset := token.NewFileSet()
 	asts, err := parser.ParseDir(fset, ".", filter, 0)
+	mem := ""
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -41,13 +42,23 @@ func main() {
 	for pName, astTree := range asts {
 		pkgName = pName
 		for _, file := range astTree.Files {
-			for name, obj := range file.Scope.Objects {
-				if obj.Kind == ast.Con {
-					if value, ok := obj.Decl.(*ast.ValueSpec); ok {
-						if cExpr, ok := value.Values[0].(*ast.CallExpr); ok {
-							if ident, ok := cExpr.Fun.(*ast.Ident); ok {
-								if ident.Name == *types {
-									constList = append(constList, name)
+			for _, obj := range file.Decls {
+				if con, ok := obj.(*ast.GenDecl); ok {
+					if con.Tok == token.CONST {
+						for _, decl := range con.Specs {
+							if value, ok := decl.(*ast.ValueSpec); ok {
+								if value.Type == nil && len(value.Values) > 0 {
+									mem = ""
+									continue
+								}
+								if value.Type != nil {
+									if ident, ok := value.Type.(*ast.Ident); ok {
+										fmt.Println(ident.String())
+										mem = ident.Name
+									}
+								}
+								if mem == *types {
+									constList = append(constList, value.Names[0].Name)
 								}
 							}
 						}
@@ -56,7 +67,7 @@ func main() {
 			}
 		}
 	}
-	gen, err := os.Create(strings.ToLower(*types) + "_generated.go")
+	gen, err := os.Create(strings.ToLower(*types) + "_makeerror.go")
 	if err != nil {
 		log.Fatal(err)
 		return
